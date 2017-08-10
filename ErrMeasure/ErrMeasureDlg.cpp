@@ -186,6 +186,7 @@ void CErrMeasureDlg::OnBnClickedOk()
 	CString M[10];
 	CString R[10];
 	CString E[10];
+	int count = 0;
 	UpdateData(true);
 	for (int i = 0; i < 5; i++)
 	{
@@ -193,6 +194,15 @@ void CErrMeasureDlg::OnBnClickedOk()
 		GetDlgItem(IDC_EDIT1 + 2 * i + 1)->GetWindowTextW(Y[i]);
 	}
 
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = i + 1; j < 5; j++)
+		{
+			M[count++] = Distance(X[i], Y[i], X[j], Y[j]);
+		}
+	}
+
+	/*
 	M[0] = Distance(X[0], Y[0], X[1], Y[1]);
 	M[1] = Distance(X[0], Y[0], X[2], Y[2]);
 	M[2] = Distance(X[0], Y[0], X[3], Y[3]);
@@ -203,7 +213,8 @@ void CErrMeasureDlg::OnBnClickedOk()
 	M[7] = Distance(X[2], Y[2], X[3], Y[3]);
 	M[8] = Distance(X[2], Y[2], X[4], Y[4]);
 	M[9] = Distance(X[3], Y[3], X[4], Y[4]);
-	
+	*/
+
 	for (int i = 0; i < 10; i++)
 	{
 		GetDlgItem(IDC_EDIT1 + 20 + i)->GetWindowTextW(R[i]);
@@ -212,6 +223,20 @@ void CErrMeasureDlg::OnBnClickedOk()
 		GetDlgItem(IDC_STATIC_ERR1 + i)->SetWindowTextW(E[i]);
 	}
 	UpdateData(false);
+
+	CFile file;
+	file.Open(_T("record.csv"), CFile::modeWrite | CFile::modeCreate | CFile::modeNoTruncate);
+	file.SeekToEnd();
+	CString output;
+	for (int i = 0; i < 9; i++)
+	{
+		output += E[i];
+		output += ',';
+	}
+	output += E[9];
+	output += '\n';
+	file.Write(output, output.GetLength() * sizeof(TCHAR));
+	file.Close();
 }
 
 

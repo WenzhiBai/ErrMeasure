@@ -19,12 +19,12 @@ class CAboutDlg : public CDialogEx
 public:
 	CAboutDlg();
 
-// 对话框数据
+	// 对话框数据
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_ABOUTBOX };
 #endif
 
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
 // 实现
@@ -154,13 +154,15 @@ HCURSOR CErrMeasureDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-CString Distance(CString X, CString Y)
+CString Distance(CString X1, CString Y1, CString X2, CString Y2)
 {
-	double x, y, result;
+	double x1, y1, x2, y2, result;
 	CString Result;
-	x = _wtof(X.GetBuffer());
-	y = _wtof(Y.GetBuffer());
-	result = sqrt(pow(x,2)+pow(y,2));
+	x1 = _wtof(X1.GetBuffer());
+	y1 = _wtof(Y1.GetBuffer());
+	x2 = _wtof(X2.GetBuffer());
+	y2 = _wtof(Y2.GetBuffer());
+	result = sqrt(pow((x1-x2), 2) + pow((y1-y2), 2));
 	Result.Format(_T("%f"), result);
 	return Result;
 }
@@ -179,19 +181,36 @@ CString Calculate(CString X, CString Y)
 void CErrMeasureDlg::OnBnClickedOk()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	CString X1;
-	CString	Y1;
-	CString M1;
-	CString R1;
-	CString E1;
+	CString X[5];
+	CString	Y[5];
+	CString M[10];
+	CString R[10];
+	CString E[10];
 	UpdateData(true);
-	GetDlgItem(IDC_EDIT1)->GetWindowTextW(X1);
-	GetDlgItem(IDC_EDIT1+1)->GetWindowTextW(Y1);
-	GetDlgItem(IDC_EDIT1+20)->GetWindowTextW(R1);
-	M1 = Distance(X1, Y1);
-	GetDlgItem(IDC_STATIC_MEA1)->SetWindowTextW(M1);
-	E1 = Calculate(M1, R1);
-	GetDlgItem(IDC_STATIC_ERR1)->SetWindowTextW(E1);
+	for (int i = 0; i < 5; i++)
+	{
+		GetDlgItem(IDC_EDIT1 + 2 * i)->GetWindowTextW(X[i]);
+		GetDlgItem(IDC_EDIT1 + 2 * i + 1)->GetWindowTextW(Y[i]);
+	}
+
+	M[0] = Distance(X[0], Y[0], X[1], Y[1]);
+	M[1] = Distance(X[0], Y[0], X[2], Y[2]);
+	M[2] = Distance(X[0], Y[0], X[3], Y[3]);
+	M[3] = Distance(X[0], Y[0], X[4], Y[4]);
+	M[4] = Distance(X[1], Y[1], X[2], Y[2]);
+	M[5] = Distance(X[1], Y[1], X[2], Y[2]);
+	M[6] = Distance(X[1], Y[1], X[2], Y[2]);
+	M[7] = Distance(X[2], Y[2], X[3], Y[3]);
+	M[8] = Distance(X[2], Y[2], X[4], Y[4]);
+	M[9] = Distance(X[3], Y[3], X[4], Y[4]);
+	
+	for (int i = 0; i < 10; i++)
+	{
+		GetDlgItem(IDC_EDIT1 + 20 + i)->GetWindowTextW(R[i]);
+		E[i] = Calculate(M[i], R[i]);
+		GetDlgItem(IDC_STATIC_MEA1 + i)->SetWindowTextW(M[i]);
+		GetDlgItem(IDC_STATIC_ERR1 + i)->SetWindowTextW(E[i]);
+	}
 	UpdateData(false);
 }
 

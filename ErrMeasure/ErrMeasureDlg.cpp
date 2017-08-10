@@ -64,6 +64,8 @@ BEGIN_MESSAGE_MAP(CErrMeasureDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDOK, &CErrMeasureDlg::OnBnClickedOk)
+	ON_BN_CLICKED(IDCANCEL, &CErrMeasureDlg::OnBnClickedCancel)
 END_MESSAGE_MAP()
 
 
@@ -152,3 +154,50 @@ HCURSOR CErrMeasureDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+CString Distance(CString X, CString Y)
+{
+	double x, y, result;
+	CString Result;
+	x = _wtof(X.GetBuffer());
+	y = _wtof(Y.GetBuffer());
+	result = sqrt(pow(x,2)+pow(y,2));
+	Result.Format(_T("%f"), result);
+	return Result;
+}
+
+CString Calculate(CString X, CString Y)
+{
+	double x, y, result;
+	CString Result;
+	x = _wtof(X.GetBuffer());
+	y = _wtof(Y.GetBuffer());
+	result = x - y;
+	Result.Format(_T("%f"), result);
+	return Result;
+}
+
+void CErrMeasureDlg::OnBnClickedOk()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	CString X1;
+	CString	Y1;
+	CString M1;
+	CString R1;
+	CString E1;
+	UpdateData(true);
+	GetDlgItem(IDC_EDIT1)->GetWindowTextW(X1);
+	GetDlgItem(IDC_EDIT1+1)->GetWindowTextW(Y1);
+	GetDlgItem(IDC_EDIT1+20)->GetWindowTextW(R1);
+	M1 = Distance(X1, Y1);
+	GetDlgItem(IDC_STATIC_MEA1)->SetWindowTextW(M1);
+	E1 = Calculate(M1, R1);
+	GetDlgItem(IDC_STATIC_ERR1)->SetWindowTextW(E1);
+	UpdateData(false);
+}
+
+
+void CErrMeasureDlg::OnBnClickedCancel()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	CDialogEx::OnCancel();
+}
